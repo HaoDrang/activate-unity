@@ -51,7 +51,11 @@ async function licensePage_login(page, username, password, authenticatorKey) {
         page.waitForNavigation({ waitUntil: 'networkidle0' })
     ]);
 
-    const verifyCodeInput = await page.$('#conversations_tfa_required_form_verify_code');
+    const [verifyCodeInput, licenseFileInput] = await Promise.race([
+        page.$('#conversations_tfa_required_form_verify_code'),
+        page.$('#licenseFile')
+    ]);
+
     if (verifyCodeInput) {
         console.log("License robot. Passing two-factor authentication...");
         if (!authenticatorKey) {
@@ -68,6 +72,10 @@ async function licensePage_login(page, username, password, authenticatorKey) {
             page.waitForNavigation({ waitUntil: 'networkidle0' })
         ]);
     }
+    if (licenseFileInput) {
+        console.log("License robot. Skip two-factor authentication");
+    }
+
 }
 
 /**
